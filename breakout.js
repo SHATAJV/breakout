@@ -1,42 +1,42 @@
-
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
-//ballon setting
+
+// Game settings
 let ballRadius = 10;
-let x = canvas.width / 2;
-let y = canvas.height - 30;
-let dx = 2;
-let dy = -2;
+let paddleHeight = 10;
+let paddleWidth = 75;
+let brickRowCount = 3;
+let brickColumnCount = 5;
+let brickWidth = 75;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
 
-// paddle setting
-const paddleHeight = 10;
-const paddleWidth = 75;
-let paddleX = (canvas.width - paddleWidth) / 2;
+// Game variables x, y = location ball, dx, dy = speed and direction of ball , paddlex= locatation paddle ,bricks= situation of bricks, rightPressed, leftPressed= press left and right buttons  
+let x, y, dx, dy, paddleX, score, bricks, rightPressed, leftPressed;
 
-// Key setting 
-let rightPressed = false;
-let leftPressed = false;
+// Function to initialize or reset the game
+function init() {
+    x = canvas.width / 2;
+    y = canvas.height - 30;
+    dx = 2;
+    dy = -2;
+    paddleX = (canvas.width - paddleWidth) / 2;
+    score = 0;
+    rightPressed = false;
+    leftPressed = false;
+    bricks = [];
 
-// Brick setting 
-const brickRowCount = 3;
-const brickColumnCount = 5;
-const brickWidth = 75;
-const brickHeight = 20;
-const brickPadding = 10;
-const brickOffsetTop = 30;
-const brickOffsetLeft = 30;
-
-let bricks = [];
-for (let c = 0; c < brickColumnCount; c++) {
-    bricks[c] = [];
-    for (let r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0, status: 1 };
+    for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRowCount; r++) {
+            bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
     }
 }
 
-
-let score = 0;
-
+// Keyboard events
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -56,7 +56,7 @@ function keyUpHandler(e) {
     }
 }
 
-// detected hit ball 
+// Ball and brick collision detection
 function collisionDetection() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
@@ -67,8 +67,12 @@ function collisionDetection() {
                     b.status = 0;
                     score++;
                     if (score === brickRowCount * brickColumnCount) {
-                        alert("You win!");
-                        document.location.reload();
+                        alert("You Win!");
+                        if (confirm("Do you want to play again?")) {
+                            init();
+                        } else {
+                            return;
+                        }
                     }
                 }
             }
@@ -79,7 +83,7 @@ function collisionDetection() {
 function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "#0095dd";
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ball-color') || "#0095dd";
     ctx.fill();
     ctx.closePath();
 }
@@ -87,7 +91,7 @@ function drawBall() {
 function drawPaddle() {
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "#0095dd";
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paddle-color') || "#0095dd";
     ctx.fill();
     ctx.closePath();
 }
@@ -102,7 +106,7 @@ function drawBricks() {
                 bricks[c][r].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = "#0095dd";
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--brick-color') || "#0095dd";
                 ctx.fill();
                 ctx.closePath();
             }
@@ -112,7 +116,7 @@ function drawBricks() {
 
 function drawScore() {
     ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095dd";
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--score-color') || "#0095dd";
     ctx.fillText("Score: " + score, 8, 20);
 }
 
@@ -124,7 +128,7 @@ function draw() {
     drawScore();
     collisionDetection();
 
-    // ball movement 
+    // Ball movement
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
@@ -134,12 +138,16 @@ function draw() {
         if (x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
         } else {
-            alert("Game Over");
-            document.location.reload();
+            // If ball is lost
+            if (confirm("Game Over. Do you want to play again?")) {
+                init(); // Reset game if player chooses to continue
+            } else {
+                return; // Stop the game if player doesn't want to continue
+            }
         }
     }
 
-    // paddle movement 
+    // Paddle movement
     if (rightPressed && paddleX < canvas.width - paddleWidth) {
         paddleX += 7;
     } else if (leftPressed && paddleX > 0) {
@@ -151,5 +159,6 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
+init();
 draw();
 
