@@ -1,12 +1,10 @@
 const c = document.getElementById("myCanvas"), ctx = c.getContext("2d"),
     [bw, bh, br, pH, pW, bRow, bCol, bPad, bTop, bLeft] = [75, 20, 10, 10, 75, 3, 5, 10, 30, 30];
 let x, y, dx, dy, pX, s, b = [], rp = false, lp = false;
-
 const init = () => {
     [x, y, dx, dy, pX, s] = [c.width / 2, c.height - 30, 2, -2, (c.width - pW) / 2, 0];
     b = Array.from({ length: bCol }, () => Array(bRow).fill({ x: 0, y: 0, status: 1 }));
 };
-
 document.addEventListener("keydown", e => e.key.includes("Right") ? rp = true : e.key.includes("Left") ? lp = true : null);
 document.addEventListener("keyup", e => e.key.includes("Right") ? rp = false : e.key.includes("Left") ? lp = false : null);
 
@@ -17,8 +15,7 @@ const collision = () => {
             if (s === bRow * bCol && confirm("Vous avez gagné ! Rejouer ?")) init();
         }
     }));
-};
-
+}
 const draw = () => {
     ctx.clearRect(0, 0, c.width, c.height);
     b.forEach((col, cIdx) => col.forEach((brick, rIdx) => {
@@ -51,5 +48,4 @@ const draw = () => {
     [x, y] = [x + dx, y + dy];
     requestAnimationFrame(draw);
 };
-
 init(); draw();
