@@ -14,7 +14,13 @@ let brickPadding = 10; // Padding between bricks
 let brickOffsetTop = 30; // Offset from the top for the bricks
 let brickOffsetLeft = 30; // Offset from the left for the bricks
 
-// Game variables
+// Game variables:
+// x, y: Current position of the ball on the canvas
+// dx, dy: Velocity of the ball, indicating its speed and direction
+// paddleX: Current horizontal position of the paddle on the canvas
+// score: The player's current score, incremented when bricks are hit
+// bricks: A 2D array representing the bricks in the game, where each brick has properties like position and status (intact or broken)
+// rightPressed, leftPressed: Boolean flags indicating whether the right or left arrow keys are currently being pressed, used for paddle movement
 let x, y, dx, dy, paddleX, score, bricks, rightPressed, leftPressed;
 
 // Function to initialize or reset the game
