@@ -1,66 +1,66 @@
-// Get the canvas element by its ID and set up the 2D drawing context
+// Récupérer l'élément canvas par son ID et configurer le contexte de dessin en 2D
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-// Game settings - these define the basic properties of the game elements
-let ballRadius = 10; // Radius of the ball
-let paddleHeight = 10; // Height of the paddle
-let paddleWidth = 75; // Width of the paddle
-let brickRowCount = 3; // Number of brick rows
-let brickColumnCount = 5; // Number of brick columns
-let brickWidth = 75; // Width of each brick
-let brickHeight = 20; // Height of each brick
-let brickPadding = 10; // Padding between bricks
-let brickOffsetTop = 30; // Offset from the top for the bricks
-let brickOffsetLeft = 30; // Offset from the left for the bricks
+// Paramètres du jeu - ces paramètres définissent les propriétés de base des éléments du jeu
+let ballRadius = 10; // Rayon de la balle
+let paddleHeight = 10; // Hauteur de la raquette
+let paddleWidth = 75; // Largeur de la raquette
+let brickRowCount = 3; // Nombre de rangées de briques
+let brickColumnCount = 5; // Nombre de colonnes de briques
+let brickWidth = 75; // Largeur de chaque brique
+let brickHeight = 20; // Hauteur de chaque brique
+let brickPadding = 10; // Espacement entre les briques
+let brickOffsetTop = 30; // Décalage depuis le haut pour les briques
+let brickOffsetLeft = 30; // Décalage depuis la gauche pour les briques
 
-// Game variables:
-// x, y: Current position of the ball on the canvas
-// dx, dy: Velocity of the ball, indicating its speed and direction
-// paddleX: Current horizontal position of the paddle on the canvas
-// score: The player's current score, incremented when bricks are hit
-// bricks: A 2D array representing the bricks in the game, where each brick has properties like position and status (intact or broken)
-// rightPressed, leftPressed: Boolean flags indicating whether the right or left arrow keys are currently being pressed, used for paddle movement
+// Variables du jeu :
+// x, y : Position actuelle de la balle sur le canvas
+// dx, dy : Vitesse de la balle, indiquant sa rapidité et sa direction
+// paddleX : Position horizontale actuelle de la raquette sur le canvas
+// score : Le score actuel du joueur, augmenté lorsqu'une brique est touchée
+// bricks : Un tableau 2D représentant les briques du jeu, où chaque brique a des propriétés comme la position et le statut (intacte ou détruite)
+// rightPressed, leftPressed : Drapeaux booléens indiquant si les touches flèche droite ou flèche gauche sont actuellement pressées, utilisés pour déplacer la raquette
 let x, y, dx, dy, paddleX, score, bricks, rightPressed, leftPressed;
 
-// Function to initialize or reset the game
+// Fonction pour initialiser ou réinitialiser le jeu
 function init() {
-    // Initialize ball position at the center bottom of the canvas
+    // Initialiser la position de la balle au centre inférieur du canvas
     x = canvas.width / 2;
     y = canvas.height - 30;
     
-    // Set the ball's initial velocity (speed and direction)
+    // Définir la vitesse initiale de la balle (rapidité et direction)
     dx = 2;
     dy = -2;
     
-    // Set the paddle's initial position (centered horizontally)
+    // Positionner la raquette au centre horizontal
     paddleX = (canvas.width - paddleWidth) / 2;
     
-    // Initialize score to 0
+    // Initialiser le score à 0
     score = 0;
     
-    // Initialize key press flags
+    // Initialiser les drapeaux de pression des touches
     rightPressed = false;
     leftPressed = false;
     
-    // Initialize bricks as an empty array
+    // Initialiser les briques comme un tableau vide
     bricks = [];
 
-    // Populate the bricks array based on the number of rows and columns
+    // Remplir le tableau de briques en fonction du nombre de rangées et de colonnes
     for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
-            // Each brick is an object with x, y coordinates and a status (1 means it's still there, 0 means it's broken)
+            // Chaque brique est un objet avec des coordonnées x, y et un statut (1 signifie qu'elle est encore là, 0 signifie qu'elle est cassée)
             bricks[c][r] = { x: 0, y: 0, status: 1 };
         }
     }
 }
 
-// Event listeners for keyboard input
+// Écouteurs d'événements pour la saisie au clavier
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-// Handle key down events (when a key is pressed)
+// Gestionnaire d'événements pour la pression d'une touche
 function keyDownHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
         rightPressed = true;
@@ -69,7 +69,7 @@ function keyDownHandler(e) {
     }
 }
 
-// Handle key up events (when a key is released)
+// Gestionnaire d'événements pour le relâchement d'une touche
 function keyUpHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
         rightPressed = false;
@@ -78,28 +78,28 @@ function keyUpHandler(e) {
     }
 }
 
-// Check for collisions between the ball and bricks
+// Vérification des collisions entre la balle et les briques
 function collisionDetection() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
             let b = bricks[c][r];
-            // Check if the brick is still visible (status = 1)
+            // Vérifier si la brique est encore visible (status = 1)
             if (b.status === 1) {
-                // Check if the ball has hit the brick
+                // Vérifier si la balle a touché la brique
                 if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-                    // Reverse the ball's direction on collision
+                    // Inverser la direction de la balle en cas de collision
                     dy = -dy;
-                    // Mark the brick as broken (status = 0)
+                    // Marquer la brique comme cassée (status = 0)
                     b.status = 0;
-                    // Increase the score
+                    // Augmenter le score
                     score++;
-                    // Check if all bricks are destroyed
+                    // Vérifier si toutes les briques sont détruites
                     if (score === brickRowCount * brickColumnCount) {
-                        alert("You Win!");
-                        if (confirm("Do you want to play again?")) {
-                            init(); // Reset the game if the player chooses to continue
+                        alert("Vous avez gagné !");
+                        if (confirm("Voulez-vous rejouer ?")) {
+                            init(); // Réinitialiser le jeu si le joueur choisit de continuer
                         } else {
-                            return; // End the game if the player chooses not to continue
+                            return; // Terminer le jeu si le joueur choisit de ne pas continuer
                         }
                     }
                 }
@@ -108,36 +108,36 @@ function collisionDetection() {
     }
 }
 
-// Function to draw the ball on the canvas
+// Fonction pour dessiner la balle sur le canvas
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, ballRadius, 0, Math.PI * 2); // Draw the ball as a circle
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ball-color') || "#0095dd"; // Set the ball color
+    ctx.arc(x, y, ballRadius, 0, Math.PI * 2); // Dessiner la balle sous forme de cercle
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ball-color') || "#0095dd"; // Définir la couleur de la balle
     ctx.fill();
     ctx.closePath();
 }
 
-// Function to draw the paddle on the canvas
+// Fonction pour dessiner la raquette sur le canvas
 function drawPaddle() {
     ctx.beginPath();
-    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight); // Draw the paddle as a rectangle
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paddle-color') || "#0095dd"; // Set the paddle color
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight); // Dessiner la raquette sous forme de rectangle
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paddle-color') || "#0095dd"; // Définir la couleur de la raquette
     ctx.fill();
     ctx.closePath();
 }
 
-// Function to draw the bricks on the canvas
+// Fonction pour dessiner les briques sur le canvas
 function drawBricks() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
             if (bricks[c][r].status === 1) {
-                let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft; // Calculate the brick's x position
-                let brickY = r * (brickHeight + brickPadding) + brickOffsetTop; // Calculate the brick's y position
+                let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft; // Calculer la position x de la brique
+                let brickY = r * (brickHeight + brickPadding) + brickOffsetTop; // Calculer la position y de la brique
                 bricks[c][r].x = brickX;
                 bricks[c][r].y = brickY;
                 ctx.beginPath();
-                ctx.rect(brickX, brickY, brickWidth, brickHeight); // Draw the brick as a rectangle
-                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--brick-color') || "#0095dd"; // Set the brick color
+                ctx.rect(brickX, brickY, brickWidth, brickHeight); // Dessiner la brique sous forme de rectangle
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--brick-color') || "#0095dd"; // Définir la couleur de la brique
                 ctx.fill();
                 ctx.closePath();
             }
@@ -145,67 +145,67 @@ function drawBricks() {
     }
 }
 
-// Function to display the current score on the canvas
+// Fonction pour afficher le score actuel sur le canvas
 function drawScore() {
-    ctx.font = "16px Arial"; // Set the font for the score
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--score-color') || "#0095dd"; // Set the color of the score text
-    ctx.fillText("Score: " + score, 8, 20); // Display the score at the top-left corner
+    ctx.font = "16px Arial"; // Définir la police pour le score
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--score-color') || "#0095dd"; // Définir la couleur du texte du score
+    ctx.fillText("Score: " + score, 8, 20); // Afficher le score en haut à gauche
 }
 
-// Main function to draw the game elements on the canvas and handle game logic
+// Fonction principale pour dessiner les éléments du jeu sur le canvas et gérer la logique du jeu
 function draw() {
-    // Clear the canvas for the next frame
+    // Effacer le canvas pour la prochaine image
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw the game elements
+    // Dessiner les éléments du jeu
     drawBricks();
     drawBall();
     drawPaddle();
     drawScore();
     
-    // Check for collisions between the ball and the bricks
+    // Vérifier les collisions entre la balle et les briques
     collisionDetection();
 
-    // Ball movement logic
-    // Reverse the ball's direction if it hits the left or right wall
+    // Logique de mouvement de la balle
+    // Inverser la direction de la balle si elle touche le mur gauche ou droit
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
-    // Reverse the ball's direction if it hits the top wall
+    // Inverser la direction de la balle si elle touche le mur du haut
     if (y + dy < ballRadius) {
         dy = -dy;
     } else if (y + dy > canvas.height - ballRadius) {
-        // Check if the ball hits the paddle
+        // Vérifier si la balle touche la raquette
         if (x > paddleX && x < paddleX + paddleWidth) {
-            dy = -dy; // Reverse the ball's direction on paddle collision
+            dy = -dy; // Inverser la direction de la balle en cas de collision avec la raquette
         } else {
-            // If the ball misses the paddle (Game Over)
-            if (confirm("Game Over. Do you want to play again?")) {
-                init(); // Reset the game if the player chooses to continue
+            // Si la balle rate la raquette (Game Over)
+            if (confirm("Game Over. Voulez-vous rejouer ?")) {
+                init(); // Réinitialiser le jeu si le joueur choisit de continuer
             } else {
-                return; // Stop the game if the player doesn't want to continue
+                return; // Arrêter le jeu si le joueur ne veut pas continuer
             }
         }
     }
 
-    // Paddle movement logic
-    // Move the paddle to the right if the right arrow key is pressed and the paddle is within bounds
+    // Logique de mouvement de la raquette
+    // Déplacer la raquette vers la droite si la touche flèche droite est pressée et que la raquette est dans les limites
     if (rightPressed && paddleX < canvas.width - paddleWidth) {
         paddleX += 7;
     }
-    // Move the paddle to the left if the left arrow key is pressed and the paddle is within bounds
+    // Déplacer la raquette vers la gauche si la touche flèche gauche est pressée et que la raquette est dans les limites
     else if (leftPressed && paddleX > 0) {
         paddleX -= 7;
     }
 
-    // Update the ball's position
+    // Mettre à jour la position de la balle
     x += dx;
     y += dy;
 
-    // Request the next frame to keep the game loop running
+    // Demander la prochaine image pour maintenir la boucle du jeu
     requestAnimationFrame(draw);
 }
 
-// Initialize the game and start the drawing loop
+// Initialiser le jeu et démarrer la boucle de dessin
 init();
 draw();
