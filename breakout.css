@@ -5,3 +5,8 @@ body {
     background-color: #f3f3f3;
 }
 
+canvas {
+    display: block;
+    background-color: #284959;
+    margin: 0 auto;
+}
