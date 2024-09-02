@@ -14,4 +14,6 @@ const paddleHeight = 10;
 const paddleWidth = 75;
 let paddleX = (canvas.width - paddleWidth) / 2;
 
-
+//setting button
+let rightPressed = false;
+let leftPressed = false;
