@@ -28,3 +28,8 @@ canvas {
     height: 20px;
     position: absolute;
 }
+#score {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #0095dd;
+}
