@@ -88,4 +88,11 @@ function drawBricks() {
         }
     }
 }
+function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095dd";
+    ctx.fillText("Score: " + score, 8, 20);
+}
+
+
 
