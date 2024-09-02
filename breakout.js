@@ -93,6 +93,12 @@ function drawScore() {
     ctx.fillStyle = "#0095dd";
     ctx.fillText("Score: " + score, 8, 20);
 }
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
+    drawBall();
+    drawPaddle();
+    drawScore();
+    collisionDetection();
 
-
-
+}
