@@ -17,3 +17,14 @@ canvas {
     border-radius: 50%;
 }
 
+#paddle {
+    width: 75px;
+    height: 10px;
+    background-color: #0095dd;
+}
+.brick {
+    background-color: #0095dd;
+    width: 75px;
+    height: 20px;
+    position: absolute;
+}
