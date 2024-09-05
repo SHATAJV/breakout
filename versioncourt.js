@@ -37,11 +37,8 @@ const init = () => {
 
 // Event listeners for keydown and keyup to track paddle movement
 document.addEventListener("keydown", e => 
-    e.key.includes("Right") ? rp = true : e.key.includes("Left") ? lp = true : null
-);
-document.addEventListener("keyup", e => 
-    e.key.includes("Right") ? rp = false : e.key.includes("Left") ? lp = false : null
-);
+    e.key.includes("Right") ? rp = true : e.key.includes("Left") ? lp = true : null);
+document.addEventListener("keyup", e => e.key.includes("Right") ? rp = false : e.key.includes("Left") ? lp = false : null);
 
 // Collision detection between the ball and bricks
 const collision = () => {
